@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Cap 2032 · données des candidatures</title>
+<style>body{font:16px/1.55 system-ui,-apple-system,sans-serif;max-width:720px;margin:40px auto;padding:0 20px;color:#14213d;background:#f4ead5}h1{letter-spacing:.06em}code{background:#fff8;padding:2px 6px;border-radius:6px}a{color:#c8102e}.card{background:#fffc;border-radius:16px;padding:16px 20px;margin:16px 0;box-shadow:0 6px 20px #14213d14}</style></head>
+<body><h1>CAP <span style="color:#c8102e">2032</span> · données</h1>
+<p>Fichiers publics lus par l'application Cap 2032 pour mettre à jour les candidatures à l'élection présidentielle 2027. Aucune donnée d'utilisateur n'est collectée ici.</p>
+<div class="card" id="m">Chargement…</div>
+<p><a href="cands.json">cands.json</a> · <a href="cands.json.sig">signature</a> · <a href="manifest.json">manifest.json</a> · <a href="https://github.com/ymeneceur/cap2032-data/blob/main/CHANGELOG.md">journal des mises à jour</a></p>
+<p style="font-size:.9em;opacity:.8">Sources : <a href="https://2027etmoi.fr">2027 et moi</a> (Licence Ouverte 2.0), converties vers les questions de Cap 2032.</p>
+<script>fetch('manifest.json',{cache:'no-store'}).then(r=>r.json()).then(m=>{document.getElementById('m').innerHTML=`<b>Version ${m.version}</b><br>Publiée le ${new Date(m.generated).toLocaleString('fr-FR')}<br>${m.candidats} candidatures · ${Math.round(m.bytes/1024)} Ko<br><small>SHA-256 : <code>${m.sha256.slice(0,16)}…</code></small>`}).catch(()=>{document.getElementById('m').textContent='Manifeste indisponible.'})</script>
+</body></html>
