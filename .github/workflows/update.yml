@@ -1,0 +1,71 @@
+name: Mise à jour des candidatures
+
+on:
+  schedule:
+    - cron: '17 3 * * *'   # chaque nuit vers 4 h 17 (heure de Paris en hiver)
+  workflow_dispatch:
+    inputs:
+      action:
+        description: 'update = vérifier les données ouvertes ; approve = publier la mise à jour en attente ; rollback = revenir à une version'
+        type: choice
+        options: [update, approve, rollback]
+        default: update
+      version:
+        description: 'Pour rollback : numéro de la version à rétablir (voir CHANGELOG.md ou le dossier history/)'
+        type: string
+        required: false
+
+permissions:
+  contents: write
+  issues: write
+  pages: write
+
+concurrency:
+  group: cap2032-data
+  cancel-in-progress: false
+
+jobs:
+  publier:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Outils
+        run: pip install --quiet 'cryptography>=43'
+
+      - name: Données ouvertes de 2027 et moi
+        if: ${{ github.event_name == 'schedule' || inputs.action == 'update' }}
+        run: |
+          git clone --depth 1 https://github.com/2027etmoi/2027etmoi /tmp/src
+          python scripts/build_cands.py /tmp/src/data /tmp/new.json
+
+      - name: Contrôles, signature et publication
+        id: pub
+        env:
+          CAP_SIGNING_KEY: ${{ secrets.CAP_SIGNING_KEY }}
+        run: python scripts/publish.py --mode "${{ inputs.action || 'update' }}" --new /tmp/new.json --version "${{ inputs.version }}"
+
+      - name: Enregistrer dans le dépôt
+        if: ${{ steps.pub.outputs.status != 'none' }}
+        run: |
+          git config user.name "cap2032-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "${{ steps.pub.outputs.title }}"
+          git push
+
+      - name: Remettre en ligne le site (GitHub Pages)
+        if: ${{ steps.pub.outputs.status != 'none' && steps.pub.outputs.status != 'held' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh api -X POST "repos/${{ github.repository }}/pages/builds" || echo "Reconstruction Pages déjà en cours"
+
+      - name: Résumé au vérificateur
+        if: ${{ steps.pub.outputs.status != 'none' && steps.pub.outputs.status != 'quiet' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh issue create --repo "${{ github.repository }}" --title "${{ steps.pub.outputs.title }}" --body-file /tmp/summary.md --assignee "${{ github.repository_owner }}"

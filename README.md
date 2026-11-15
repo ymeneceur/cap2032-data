@@ -22,6 +22,20 @@ Clé publique de vérification (Ed25519, base64) : `mvRsiv6ok/UceE4N6jLKiYQnkP5f
 
 ## Mise à jour
 
-Les mises à jour sont préparées automatiquement à partir des sources ouvertes, contrôlées (structure, sources présentes), signées puis publiées. Un vérificateur reçoit un résumé de chaque changement et peut revenir à la version précédente. Les changements importants (candidat retiré, nombreuses positions modifiées, source manquante) attendent sa validation avant publication.
+Chaque nuit, l'Action « Mise à jour des candidatures » (`.github/workflows/update.yml`) :
+
+1. récupère les données ouvertes de [2027 et moi](https://github.com/2027etmoi/2027etmoi) ;
+2. les convertit vers les questions de Cap 2032 (`scripts/build_cands.py`) : candidatures dont le programme est publié, avec au moins 5 positions ;
+3. contrôle les changements (`scripts/publish.py`) ;
+4. publie la nouvelle version signée, l'archive dans `history/` et l'ajoute au journal ;
+5. ouvre un ticket (issue) qui résume les changements : le vérificateur le reçoit par e-mail.
+
+**Garde-fous.** La mise à jour attend la validation du vérificateur (dossier `pending/`) si une candidature disparaît, si plus de 5 positions changent, si une position s'inverse, ou si une source manque.
+
+**Interventions du vérificateur** (Actions > Mise à jour des candidatures > Run workflow) :
+- `approve` publie la mise à jour en attente ;
+- `rollback` + numéro de version rétablit une version archivée (republiée sous un nouveau numéro).
+
+La clé privée de signature est un secret du dépôt (`CAP_SIGNING_KEY`) : elle n'apparaît jamais dans les fichiers.
 
 Aucune donnée d'utilisateur n'est stockée ici : l'application ne fait que lire ces fichiers.
