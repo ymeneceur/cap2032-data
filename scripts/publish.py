@@ -216,6 +216,11 @@ def main():
         SUMMARY.write_text('Mise à jour technique (dates des sources).', encoding='utf-8')
         return out(status='quiet', title=f'Mise à jour technique (version {data["version"]})')
     hold = reasons_to_hold(removed, changes, problems)
+    if int(new.get('qset', 1)) != int(cur.get('qset', 1)):
+        # nouveau jeu de questions : les numéros ne désignent plus les mêmes sujets, la comparaison question par question ne vaut pas
+        hold.insert(0, f"nouveau jeu de questions (n° {new.get('qset', 1)} au lieu de {cur.get('qset', 1)}) : huit questions ont changé de sujet ; "
+                       "les « positions modifiées » ci-dessous comparent donc parfois deux questions différentes. Seules les applications "
+                       f"qui utilisent le jeu n° {new.get('qset', 1)} liront ces données.")
     if hold:
         (ROOT / 'pending').mkdir(exist_ok=True)
         pending.write_text(json.dumps(new, ensure_ascii=False, indent=1), encoding='utf-8')

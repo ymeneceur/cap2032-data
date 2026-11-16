@@ -12,19 +12,21 @@ Q=json.load(open(f'{E}/questions.json',encoding='utf-8'));POS=Q['positions'];QT=
 CAND=json.load(open(f'{E}/candidats.json',encoding='utf-8'))
 INFO={c['id']:c for c in CAND['candidats']}
 S={'pour':2,'plutot_pour':1,'nuance':0,'plutot_contre':-1,'contre':-2}
-# Nos questions (numéro 1-27) -> question 2027etmoi, sens, coefficient (0,5 = question proche mais pas identique)
-MAP={1:('q05',1,1),2:('q01',1,1),4:('q03',1,1),7:('q18',1,1),8:('q17',1,1),9:('q35',-1,1),10:('q14',1,.5),11:('q29',1,1),12:('q11',1,1),15:('q15',1,1),17:('q19',1,1),18:('q20',1,1),20:('q33',1,1),25:('q34',1,1)}
+# Jeu de questions n° 2 (rééquilibrage de novembre 2026). Nos questions (numéro 1-27) -> question 2027etmoi, sens, coefficient (0,5 = question proche mais pas identique)
+MAP={1:('q05',1,1),2:('q01',1,1),4:('q03',1,1),6:('q02',1,1),7:('q18',1,1),8:('q17',1,1),10:('q14',1,.5),11:('q29',1,1),12:('q11',1,1),15:('q15',1,1),17:('q19',1,1),18:('q20',1,1),20:('q33',1,1),21:('q21',1,1),23:('q09',1,1)}
 # Codage complémentaire à partir des mesures sourcées (motif cherché dans le texte de la mesure)
 EXTRA={
  3:{'lisnard':(2,r"200 milliards d'euros d'économies"),'philippe':(1,r'déficit public')},
  5:{'melenchon':(2,r'Renationalisation de la SNCF'),'roussel':(2,r'TotalEnergies et Engie nationalisés'),'philippot':(2,r'Renationalisation des autoroutes'),'branco':(2,r'nationalisation de la distribution'),'maurel':(2,r"Reprise par l'État de l'infrastructure autoroutière"),'ruffin':(1,r'nationalisations possibles')},
- 6:{'glucksmann':(2,r'Grand emprunt européen'),'tondelier':(1,r'haut conseil militaire intégré'),'philippe':(1,r'union européenne des marchés de capitaux'),'dupont-aignan':(-2,r"Sortie de l'Union européenne"),'maurel':(-1,r'rabais sur la contribution')},
+ 9:{'melenchon':(2,r'héritage maximal'),'glucksmann':(2,r'méga-héritages'),'tondelier':(2,r'héritages de plus de 4 millions'),'roussel':(2,r'taxation accrue des héritages les plus élevés'),'hollande':(1,r'grosses successions'),'dupont-aignan':(-1,r'droits de succession sur la résidence principale')},
  13:{'ruffin':(2,r'réduction de moitié du trafic aérien'),'tondelier':(1,r"hausse du prix des billets d'avion")},
  14:{'philippe':(1,r'zéro surtransposition'),'lisnard':(1,r'Fin des surtranspositions'),'retailleau':(2,r'Réautorisation de certains néonicotinoïdes'),'tondelier':(-2,r'Sortie progressive des pesticides')},
  19:{'maurel':(2,r'Hausse annuelle d.au moins 4 %')},
- 21:{'maurel':(1,r"Inscription de l'audiovisuel public dans la Constitution")}}
+ 25:{'le-pen':(-2,r'DPE\) deviendrait un simple élément indicatif'),'retailleau':(-2,r'DPE reste informatif')},
+ 26:{'melenchon':(2,r'Interdiction des intelligences artificielles visant à simuler')},
+ 27:{'guedj':(2,r'testings judiciarisés')}}
 # Mesures qui répondent plus directement à nos questions que la question proche de 2027etmoi : elles remplacent le codage
-OVR={'tondelier':{6:(2,r'haut conseil militaire intégré'),10:(2,r'Régularisation des travailleurs sans papiers'),5:(1,r"régies publiques de l'eau")}}
+OVR={'tondelier':{10:(2,r'Régularisation des travailleurs sans papiers'),5:(1,r"régies publiques de l'eau")}}
 MIN_POS=5
 issues=[]
 out=[]
@@ -57,7 +59,7 @@ for f in sorted(os.listdir(f'{E}/programmes')):
       'pos':{str(k):v for k,v in sorted(pos.items())}})
 ALL=[{'id':c['id'],'nom':c['nom'],'parti':c.get('parti',''),'statut':c['statut'],'detail':c.get('statut_detail',''),'s':c.get('source')} for c in CAND['candidats'] if c['statut'] in('declare','pressenti')]
 now=dt.datetime.now(dt.timezone.utc)
-res={'version':int(now.strftime('%Y%m%d%H')),'generated':now.replace(microsecond=0).isoformat(),'maj':Q['mise_a_jour'],'maj_candidats':CAND['mise_a_jour'],'maj_donnees':json.load(open(f'{E}/meta.json'))['donnees'],'cands':out,'all':ALL}
+res={'qset':2,'version':int(now.strftime('%Y%m%d%H')),'generated':now.replace(microsecond=0).isoformat(),'maj':Q['mise_a_jour'],'maj_candidats':CAND['mise_a_jour'],'maj_donnees':json.load(open(f'{E}/meta.json'))['donnees'],'cands':out,'all':ALL}
 json.dump(res,open(OUT,'w',encoding='utf-8'),ensure_ascii=False,indent=1)
 json.dump(issues,open(OUT+'.issues.json','w',encoding='utf-8'),ensure_ascii=False,indent=1)
 print(len(out),'candidatures retenues ;',len(issues),'problème(s)')
