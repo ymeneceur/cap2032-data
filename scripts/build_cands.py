@@ -28,6 +28,8 @@ EXTRA={
 # Mesures qui répondent plus directement à nos questions que la question proche de 2027etmoi : elles remplacent le codage
 OVR={'tondelier':{10:(2,r'Régularisation des travailleurs sans papiers'),5:(1,r"régies publiques de l'eau")}}
 MIN_POS=5
+# thèmes de 2027 et moi -> 9 thèmes de Cap 2032
+THEME9={'logement':0,'economie':1,'travail':1,'retraites':1,'sante':2,'education':3,'securite':4,'immigration':5,'societe':5,'ecologie':6,'territoires':6,'institutions':7,'international':8}
 issues=[]
 out=[]
 for f in sorted(os.listdir(f'{E}/programmes')):
@@ -56,7 +58,9 @@ for f in sorted(os.listdir(f'{E}/programmes')):
     if len(pos)<MIN_POS:continue
     out.append({'id':cid,'nom':info.get('nom',cid),'parti':info.get('parti',''),'statut':info.get('statut',''),'statut_detail':info.get('statut_detail',''),
       'prog':{'titre':prog['programme'].get('titre'),'url':prog['programme'].get('url'),'etat':prog['programme'].get('etat'),'maj':prog.get('mise_a_jour')},
-      'pos':{str(k):v for k,v in sorted(pos.items())}})
+      'pos':{str(k):v for k,v in sorted(pos.items())},
+      # mesures du programme classées dans les 9 thèmes de Cap 2032 (thèmes de 2027 et moi regroupés)
+      'mes':[{'t':THEME9[m.get('theme')],'x':m['texte'],'s':m.get('source')} for m in prog.get('mesures',[]) if m.get('theme') in THEME9]})
 ALL=[{'id':c['id'],'nom':c['nom'],'parti':c.get('parti',''),'statut':c['statut'],'detail':c.get('statut_detail',''),'s':c.get('source')} for c in CAND['candidats'] if c['statut'] in('declare','pressenti')]
 now=dt.datetime.now(dt.timezone.utc)
 res={'qset':2,'version':int(now.strftime('%Y%m%d%H')),'generated':now.replace(microsecond=0).isoformat(),'maj':Q['mise_a_jour'],'maj_candidats':CAND['mise_a_jour'],'maj_donnees':json.load(open(f'{E}/meta.json'))['donnees'],'cands':out,'all':ALL}
