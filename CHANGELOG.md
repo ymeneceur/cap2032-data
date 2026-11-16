@@ -1,5 +1,8 @@
 # Journal des mises à jour
 
+## 2026111623 (16/11/2026)
+- Dates de mise à jour des sources actualisées.
+
 ## 2026111622 (16/11/2026)
 - Mise à jour validée par le vérificateur.
 
