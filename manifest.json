@@ -1,9 +1,9 @@
 {
-  "version": 2026111521,
-  "generated": "2026-11-15T21:14:26+00:00",
+  "version": 2026111622,
+  "generated": "2026-11-16T22:27:13+00:00",
   "file": "cands.json",
-  "sha256": "d999dc06bf064578da7de348e609e8c0c03826afd90189d5be0833e2f0373207",
-  "sig": "RqIZOKZtmShIjmwhP73ddSoKe4SKnBKUwPuVUa5unH3pPXlsMYcNe38eW+r7hHqjlesg8eDjXDepVZvCKZ0VBg==",
-  "bytes": 90225,
-  "candidats": 16
+  "sha256": "561b7e5a9272897dfae93873db0bcb4f08f181336723edd2f7e320edce0c9bc0",
+  "sig": "P8fr12jjT+77WdrzdV27ULIiGCE469YYrUeC/QIXHdpR7UNfCX2C9CgOORlOmRvttWfKuYd/REfjCuA36vpzBw==",
+  "bytes": 94772,
+  "candidats": 17
 }
