@@ -8,4 +8,5 @@
 <p><a href="cands.json">cands.json</a> · <a href="cands.json.sig">signature</a> · <a href="manifest.json">manifest.json</a> · <a href="https://github.com/ymeneceur/cap2032-data/blob/main/CHANGELOG.md">journal des mises à jour</a></p>
 <p style="font-size:.9em;opacity:.8">Sources : <a href="https://2027etmoi.fr">2027 et moi</a> (Licence Ouverte 2.0), converties vers les questions de Cap 2032.</p>
 <script>fetch('manifest.json',{cache:'no-store'}).then(r=>r.json()).then(m=>{document.getElementById('m').innerHTML=`<b>Version ${m.version}</b><br>Publiée le ${new Date(m.generated).toLocaleString('fr-FR')}<br>${m.candidats} candidatures · ${Math.round(m.bytes/1024)} Ko<br><small>SHA-256 : <code>${m.sha256.slice(0,16)}…</code></small>`}).catch(()=>{document.getElementById('m').textContent='Manifeste indisponible.'})</script>
+<p><a href="confidentialite.html">Politique de confidentialité de l’application</a></p>
 </body></html>
