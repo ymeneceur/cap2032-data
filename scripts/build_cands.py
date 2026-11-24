@@ -56,6 +56,7 @@ for f in sorted(os.listdir(f'{E}/programmes')):
         c=coded(n,v,rx)
         if c:pos[n]=c
     if len(pos)<MIN_POS:continue
+    if info.get('statut') not in ('declare','pressenti'):continue  # candidature retirée : plus comparée
     out.append({'id':cid,'nom':info.get('nom',cid),'parti':info.get('parti',''),'statut':info.get('statut',''),'statut_detail':info.get('statut_detail',''),
       'prog':{'titre':prog['programme'].get('titre'),'url':prog['programme'].get('url'),'etat':prog['programme'].get('etat'),'maj':prog.get('mise_a_jour')},
       'pos':{str(k):v for k,v in sorted(pos.items())},
