@@ -182,7 +182,7 @@ def main():
         d = diff(cur, data, [])
         sign_and_write(data, f'- Retour à la version {a.version} (demandé par le vérificateur).')
         title = f'↩️ Retour à la version {a.version} (publiée sous le n° {data["version"]})'
-        SUMMARY.write_text(summary_md(title, cur, data, d, [], data['version']), encoding='utf-8')
+        SUMMARY.write_text(summary_md(title, cur, data, d, [], data['version']) + (('\n\n**Pour information (publié automatiquement) :**\n' + '\n'.join('- ' + r for r in info)) if info else ''), encoding='utf-8')
         return out(status='rolledback', title=title)
 
     if a.mode == 'approve':
@@ -205,7 +205,7 @@ def main():
         SUMMARY.write_text('Aucun changement dans les données ouvertes.', encoding='utf-8')
         return out(status='none', title='Aucun changement')
     if pending.exists() and core(load(pending)) == core(new):
-        SUMMARY.write_text('Mise à jour déjà en attente de validation.', encoding='utf-8')
+        SUMMARY.write_text('Mise à jour déjà en attente (données suspectes ou nouveau jeu de questions).', encoding='utf-8')
         return out(status='none', title='Déjà en attente')
     d = diff(cur, new, issues)
     added, removed, changes, notes, problems, newall = d
@@ -215,7 +215,13 @@ def main():
         sign_and_write(data, '- Dates de mise à jour des sources actualisées.')
         SUMMARY.write_text('Mise à jour technique (dates des sources).', encoding='utf-8')
         return out(status='quiet', title=f'Mise à jour technique (version {data["version"]})')
-    hold = reasons_to_hold(removed, changes, problems)
+    # Publication automatique : les changements (candidature retirée, positions modifiées ou inversées, source manquante)
+    # sont publiés sans attendre et signalés dans le ticket pour information. On ne met en attente que deux cas techniques :
+    # un nouveau jeu de questions, ou des données manifestement cassées (presque toutes les candidatures disparaissent).
+    info = reasons_to_hold(removed, changes, problems)
+    hold = []
+    if len(new.get('cands', [])) < max(3, len(cur.get('cands', [])) // 2):
+        hold.append(f"données suspectes : {len(new.get('cands', []))} candidature(s) au lieu de {len(cur.get('cands', []))} ; la source a peut-être changé de format.")
     if int(new.get('qset', 1)) != int(cur.get('qset', 1)):
         # nouveau jeu de questions : les numéros ne désignent plus les mêmes sujets, la comparaison question par question ne vaut pas
         hold.insert(0, f"nouveau jeu de questions (n° {new.get('qset', 1)} au lieu de {cur.get('qset', 1)}) : huit questions ont changé de sujet ; "
@@ -231,9 +237,15 @@ def main():
     data = stamp(new, cur)
     bits = []
     if added: bits.append(f'{len(added)} nouvelle(s) candidature(s)')
+    if removed: bits.append(f'{len(removed)} candidature(s) retirée(s)')
     if changes: bits.append(f'{len(changes)} position(s) modifiée(s)')
     if notes: bits.append(f'{len(notes)} changement(s) de statut ou de programme')
+    if problems: bits.append(f'{len(problems)} point(s) à vérifier')
+    if not bits: bits.append('données actualisées')
     sign_and_write(data, '- ' + ', '.join(bits) + '.')
+    if (ROOT / 'pending').exists():  # une ancienne mise à jour en attente est remplacée par celle-ci
+        for f in (ROOT / 'pending').iterdir(): f.unlink()
+        (ROOT / 'pending').rmdir()
     title = f'🗳 Candidatures mises à jour (version {data["version"]}) : ' + ', '.join(bits)
     SUMMARY.write_text(summary_md(title, cur, data, d, [], data['version']), encoding='utf-8')
     out(status='published', title=title)

@@ -30,9 +30,9 @@ Chaque nuit, l'Action « Mise à jour des candidatures » (`.github/workflows/up
 4. publie la nouvelle version signée, l'archive dans `history/` et l'ajoute au journal ;
 5. ouvre un ticket (issue) qui résume les changements : le vérificateur le reçoit par e-mail.
 
-**Garde-fous.** La mise à jour attend la validation du vérificateur (dossier `pending/`) si une candidature disparaît, si plus de 5 positions changent, si une position s'inverse, ou si une source manque.
+**Publication automatique.** Les mises à jour sont publiées sans validation, y compris quand une candidature est retirée, qu'une position change ou s'inverse, ou qu'une source manque : ces points sont signalés dans le ticket, pour information. Deux contrôles ont lieu chaque jour (nuit et soirée). Seuls deux cas techniques restent en attente (dossier `pending/`) : des données manifestement cassées (moins de la moitié des candidatures) ou un nouveau jeu de questions.
 
-**Interventions du vérificateur** (Actions > Mise à jour des candidatures > Run workflow) :
+**Interventions possibles** (Actions > Mise à jour des candidatures > Run workflow) :
 - `approve` publie la mise à jour en attente ;
 - `rollback` + numéro de version rétablit une version archivée (republiée sous un nouveau numéro).
 
