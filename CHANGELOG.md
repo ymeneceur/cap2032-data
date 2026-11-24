@@ -1,5 +1,8 @@
 # Journal des mises à jour
 
+## 2026112422 (24/11/2026)
+- 1 changement(s) de statut ou de programme.
+
 ## 2026111811 (18/11/2026)
 - Dates de mise à jour des sources actualisées.
 
